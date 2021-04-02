@@ -5,11 +5,12 @@ import time
 from chache_service import CacheService
 
 
-def write(cache_service: CacheService):
+def write(cache_service: CacheService, uid):
     index = 0
     while True:
-        logging.info(f"Writer: key{index}, value{index}")
-        cache_service.set(f"key{index}", f"value{index}", expiry=20)
+        logging.info(f"Writer{uid}: key_{uid*'1'}_{index}, value{uid}")
+        cache_service.set(f"key{uid}", f"value{uid}", expiry=3)
+
         index += 1
         time.sleep(7)
 
@@ -21,8 +22,6 @@ if __name__ == "__main__":
     t1 = threading.Thread(target=cache.run)
     t1.start()
 
-    t2 = threading.Thread(target=write, args=(cache,))
-    t2.start()
-
-    t1.join()
-    t2.join()
+    for i in range(1, 3):
+        t = threading.Thread(target=write, args=(cache, i))
+        t.start()
